@@ -41,8 +41,14 @@ class BadKey(Exception):
     pass
 
 
+class BadLocation(Exception):
+    """Pinnacle bloquea algunos paises (p. ej. servidores de EE. UU.)."""
+
+
 def api(path):
     r = requests.get(f"{BASE}{path}", headers=HEADERS, timeout=30)
+    if r.status_code == 403 and "location" in r.text.lower():
+        raise BadLocation(r.text[:200])
     if r.status_code in (401, 403):
         raise BadKey(f"Pinnacle rechaza la API key ({r.status_code}): {r.text[:200]}")
     r.raise_for_status()
@@ -188,18 +194,21 @@ if __name__ == "__main__":
             raise SystemExit("Falta PINNACLE_API_KEY")
         try:
             cycle()
+        except BadLocation:
+            print("Pinnacle bloquea la ubicacion de este servidor; se reintenta en la proxima ejecucion")
         except BadKey as e:
             print("error:", e, flush=True)
             tg("⚠️ Tennis Scout: Pinnacle ha cambiado la API key. Hay que actualizarla")
             sys.exit(1)
         sys.exit()
-    if "--test" not in sys.argv:
-        _lock = single_instance()
-    check_key()
     if "--test" in sys.argv:
         tg("🧪 Prueba Tennis Scout: Telegram OK")
-        print("Mensaje de prueba enviado. Pinnacle OK.")
+        print("Mensaje de prueba enviado.")
+        check_key()
+        print("Pinnacle OK.")
         sys.exit()
+    _lock = single_instance()
+    check_key()
     tg("✅ Tennis Scout arrancado")
     while True:
         try:

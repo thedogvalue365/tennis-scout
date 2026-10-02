@@ -33,7 +33,7 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           PINNACLE_API_KEY: ${{ secrets.PINNACLE_API_KEY }}
         run: |
-          if [ "${{ inputs.prueba }}" = "true" ]; then python bot.py --test; fi
+          if [ "${{ inputs.prueba }}" = "true" ]; then python bot.py --test || true; fi
           python bot.py --once
       - name: Guardar memoria de partidos avisados
         if: always()
