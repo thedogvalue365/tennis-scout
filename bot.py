@@ -22,8 +22,8 @@ try:
 except ImportError:
     pass
 
-TG_TOKEN = os.environ["TELEGRAM_TOKEN"]
-TG_CHAT  = os.environ["TELEGRAM_CHAT_ID"]
+TG_TOKEN = os.environ["TELEGRAM_TOKEN"].strip()
+TG_CHAT  = os.environ["TELEGRAM_CHAT_ID"].strip()
 PIN_KEY  = os.getenv("PINNACLE_API_KEY", "").strip()
 POLL_SEC = float(os.getenv("POLL_SECONDS", "60"))
 BASE     = "https://guest.api.arcadia.pinnacle.com/0.1"
