@@ -1,0 +1,5 @@
+.env
+.env.backup
+bot_oddspapi_backup.py
+seen.json
+__pycache__/
