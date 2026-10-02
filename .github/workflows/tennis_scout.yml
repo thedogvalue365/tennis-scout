@@ -4,6 +4,11 @@ on:
   schedule:
     - cron: "*/10 * * * *"   # cada 10 min (GitHub a veces se retrasa unos minutos)
   workflow_dispatch:          # boton para lanzarlo a mano
+    inputs:
+      prueba:
+        description: "Mandar mensaje de prueba a Telegram"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -27,7 +32,9 @@ jobs:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           PINNACLE_API_KEY: ${{ secrets.PINNACLE_API_KEY }}
-        run: python bot.py --once
+        run: |
+          if [ "${{ inputs.prueba }}" = "true" ]; then python bot.py --test; fi
+          python bot.py --once
       - name: Guardar memoria de partidos avisados
         if: always()
         run: |
